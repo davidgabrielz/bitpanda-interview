@@ -6,7 +6,7 @@ export interface TodoItemType {
     updatedAt: string;
 }
 
-interface TodoResponseMeta {
+export interface TodoResponseMeta {
     hasNextPage: boolean,
     hasPrevPage: boolean,
     itemCount: number,

@@ -19,8 +19,12 @@
       )
       .no-items(v-show="!items.length") Nothing to do :)
     .page-controls
-      prev-icon(@click="prevPage")
-      next-icon(@click="nextPage")
+      prev-icon(@click="prevPage"
+        :class="['page-control', !meta.hasPrevPage ? 'page-disabled' : '']"
+      )
+      next-icon(@click="nextPage"
+        :class="['page-control', !meta.hasNextPage ? 'page-disabled' : '']"
+      )
 </template>
 
 <script lang="ts">
@@ -30,7 +34,7 @@ import SearchIcon from 'vue-material-design-icons/Magnify.vue';
 import AddIcon from 'vue-material-design-icons/Plus.vue';
 import { Vue, Component, Watch } from 'vue-property-decorator';
 
-import { TodoItemType } from '@/appTypes/Todo';
+import { TodoItemType, TodoResponseMeta } from '@/appTypes/Todo';
 import TodoItem from '@/components/TodoItem.vue';
 import { TodoState } from '@/stores/todoStore';
 
@@ -64,20 +68,30 @@ export default class TodoItems extends Vue {
     return (this.$store.state as TodoState).todoItems;
   }
 
+  get meta(): TodoResponseMeta {
+    return (this.$store.state as TodoState).meta;
+  }
+
   created(): void {
     this.reloadItems();
   }
 
   reloadItems(): void {
+    this.$store.commit('setOffset', 0);
+
     void this.$store.dispatch('getTodoItems');
   }
 
   prevPage(): void {
-    console.log('loading prev page', this);
+    if (!this.meta.hasPrevPage) return;
+
+    void this.$store.dispatch('loadPrevPage');
   }
 
   nextPage(): void {
-    console.log('loading next page', this);
+    if (!this.meta.hasNextPage) return;
+
+    void this.$store.dispatch('loadNextPage');
   }
 
   addNewItem(): void {
@@ -96,6 +110,9 @@ export default class TodoItems extends Vue {
 <style lang="scss">
 .todo-items-container {
   padding: 50px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .todo-items {
@@ -115,12 +132,16 @@ export default class TodoItems extends Vue {
   margin-left: auto;
   // margin-right: 0;
   padding: 7px;
-  > span {
+  .page-control {
     cursor: pointer;
     font-size: 2em;
     font-weight: 200;
     &:not(:last-of-type) {
       border-right: 1px solid #bbbbbb;
+    }
+
+    &.page-disabled {
+      color: lightgray;
     }
   }
 }
@@ -157,6 +178,7 @@ export default class TodoItems extends Vue {
 .add-new-item-container {
   display: flex;
   padding: 18px;
+  padding-top: 23px;
   align-items: center;
   background: #fafafa;
   border-bottom: 1px solid #bbbbbb;
@@ -170,6 +192,7 @@ export default class TodoItems extends Vue {
     font-size: 20px;
     color: black;
     &::placeholder {
+      font-weight: 100 !important;
       color: #a8a8a8
     }
   }

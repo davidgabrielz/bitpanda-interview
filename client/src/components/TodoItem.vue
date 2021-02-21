@@ -123,11 +123,15 @@ export default class TodoItem extends Vue {
     align-items: center;
     border-radius: 50%;
     border: 1px solid lightgray;
-    min-width: 25px;
-    min-height: 25px;
+    min-width: 30px;
+    min-height: 30px;
     margin-right: 10px;
     color: #5dc2af;
-    font-size: 20px;
+    font-size: 28px;
+
+    .material-design-icon {
+      transform: rotate(-11deg);
+    }
   }
   .remove-item {
     margin-left: auto;

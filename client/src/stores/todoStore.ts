@@ -2,7 +2,7 @@ import axios from 'axios';
 import Vue from 'vue';
 import Vuex, { ActionContext } from 'vuex';
 
-import { TodoItemType, TodoResponse } from '@/appTypes/Todo';
+import { TodoItemType, TodoResponse, TodoResponseMeta } from '@/appTypes/Todo';
 
 Vue.use(Vuex);
 
@@ -10,13 +10,25 @@ const baseUri = 'http://localhost:3000/api/v1';
 
 export interface TodoState {
   todoItems: TodoItemType[];
+  meta: TodoResponseMeta,
   filterTerm: string;
 }
 
-const pageDim = 20;
+const pageDim = 10;
 
 const todoState: TodoState = {
   todoItems: [],
+  meta: {
+    hasNextPage: false,
+    hasPrevPage: false,
+    itemCount: 0,
+    limit: pageDim,
+    nextPage: null,
+    prevPage: null,
+    offset: 0,
+    page: 0,
+    pageCount: 0,
+  },
   filterTerm: '',
 };
 
@@ -25,6 +37,12 @@ export default new Vuex.Store({
   mutations: {
     setTodoItems(state, items: TodoItemType[]): void {
       state.todoItems = items;
+    },
+    setMeta(state, meta: TodoResponseMeta): void {
+      state.meta = meta;
+    },
+    setOffset(state, offset: number): void {
+      state.meta = { ...state.meta, offset };
     },
     setItemDone(state, payload: { item: TodoItemType, isDone: boolean }) {
       state.todoItems = state.todoItems.map((x: TodoItemType) => (x._id === payload.item._id
@@ -50,11 +68,26 @@ export default new Vuex.Store({
   },
   actions: {
     getTodoItems(context: ActionContext<typeof todoState, typeof todoState>): void {
-      axios.get<TodoResponse>(`${baseUri}/todo?limit=${pageDim}&description=${context.state.filterTerm}`)
+      axios.get<TodoResponse>(`${baseUri}/todo`, {
+        params: {
+          limit: pageDim,
+          description: context.state.filterTerm,
+          offset: context.state.meta.offset,
+        },
+      })
         .then((r): void => {
           context.commit('setTodoItems', r.data.items);
+          context.commit('setMeta', r.data.meta);
         })
         .catch(() => console.log('something failed'));
+    },
+    loadPrevPage(context: ActionContext<typeof todoState, typeof todoState>) {
+      context.commit('setOffset', context.state.meta.offset - context.state.meta.limit);
+      void context.dispatch('getTodoItems');
+    },
+    loadNextPage(context: ActionContext<typeof todoState, typeof todoState>) {
+      context.commit('setOffset', context.state.meta.offset + context.state.meta.limit);
+      void context.dispatch('getTodoItems');
     },
     updateItem(context: ActionContext<typeof todoState, typeof todoState>,
       args: { item: TodoItemType, isDone: boolean }): void {
