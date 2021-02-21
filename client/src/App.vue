@@ -1,25 +1,39 @@
 <template lang="pug">
-  #app.todo-app
-    div {{ message }}
+  .todo-app
+    todo-items
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { Vue, Component } from 'vue-property-decorator';
 
-export default defineComponent({
+import TodoItems from '@/components/TodoItems.vue';
+
+@Component({
   name: 'App',
-  setup() {
-    // utilise todo-bitpanda-server to get data
-
-    return {
-      message: 'Todo list should be here',
-    };
+  components: {
+    TodoItems,
   },
-});
+})
+export default class App extends Vue {
+}
 </script>
 
 <style lang="scss">
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+.material-design-icon {
+  margin-top: -5px;
+}
 .todo-app {
-  text-align: center;
+  // text-align: center;
+  width: 100%;
+  min-height: 100%;
+  height: fit-content;
+  background: #e5e5e5;
+  font-family: 'Calibri';
+  font-weight: 300;
 }
 </style>

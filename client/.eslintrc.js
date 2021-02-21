@@ -6,6 +6,14 @@ module.exports = {
   env: {
     node: true,
   },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        moduleDirectory: ['node_modules', 'src/'],
+      }
+    }
+  },
   extends: [
     'eslint:recommended',
 
@@ -18,6 +26,7 @@ module.exports = {
 
     'airbnb-base',
   ],
+  ignorePatterns: ['.eslintrc.js'],
   parserOptions: {
     extraFileExtensions: ['.vue'],
     parser: '@typescript-eslint/parser',
@@ -27,6 +36,11 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'no-param-reassign': 0,
+    'import/no-unresolved': 0,
+    'no-void': 0,
+    '@typescript-eslint/no-unsafe-assignment': 0,
+    'no-underscore-dangle': 0,
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'import/order': ['error', {
