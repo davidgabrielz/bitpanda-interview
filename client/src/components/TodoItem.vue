@@ -1,16 +1,13 @@
 <template lang="pug">
   .todo-item(:class="isDone ? 'todo-item-done' : ''")
-    //- input(type='checkbox' v-model="isDone")
-    .custom-checkbox(@click="isDone = !isDone")
-      check-icon(v-if="isDone" :size="50")
+    checkbox(v-model="isDone")
     div(class="todo-item-description") {{ item.description }}
-    div(class="todo-item-last-modified") {{ lastModfied }}
+    div(class="todo-item-last-modified") - {{ lastModfied }}
     .remove-item
       remove-icon(@click="remove")
 </template>
 
 <script lang="ts">
-import CheckIcon from 'vue-material-design-icons/Check.vue';
 import RemoveIcon from 'vue-material-design-icons/Close.vue';
 import {
   Vue,
@@ -20,44 +17,14 @@ import {
 } from 'vue-property-decorator';
 
 import { TodoItemType } from '@/appTypes/Todo';
-
-function timeSince(date: Date) {
-  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-
-  let interval = seconds / 31536000;
-
-  if (interval > 1) {
-    return `${Math.floor(interval)} years`;
-  }
-
-  interval = seconds / 2592000;
-  if (interval > 1) {
-    return `${Math.floor(interval)} months`;
-  }
-
-  interval = seconds / 86400;
-  if (interval > 1) {
-    return `${Math.floor(interval)} days`;
-  }
-
-  interval = seconds / 3600;
-  if (interval > 1) {
-    return `${Math.floor(interval)} hours`;
-  }
-
-  interval = seconds / 60;
-  if (interval > 1) {
-    return `${Math.floor(interval)} minutes`;
-  }
-
-  return `${Math.floor(seconds)} seconds`;
-}
+import Checkbox from '@/utils/Checkbox.vue';
+import { timeSince } from '@/utils/formatters';
 
 @Component({
   name: 'TodoItem',
   components: {
-    CheckIcon,
     RemoveIcon,
+    Checkbox,
   },
 })
 export default class TodoItem extends Vue {
@@ -67,10 +34,10 @@ export default class TodoItem extends Vue {
     return this.item.done;
   }
 
-  set isDone(v: boolean) {
+  set isDone(newV: boolean) {
     this.$store.commit('setItemDone', {
       item: this.item,
-      isDone: v,
+      isDone: newV,
     });
   }
 
@@ -83,7 +50,7 @@ export default class TodoItem extends Vue {
   }
 
   get lastModfied(): string {
-    return ` - ${timeSince(new Date(this.item.updatedAt))}`;
+    return timeSince(new Date(this.item.updatedAt));
   }
 
   remove(): void {

@@ -157,7 +157,7 @@ export default class TodoItems extends Vue {
     font-size: 20px;
     font-weight: normal;
     color: #676767;
-    // margin-left: 8px;
+    margin-left: 5px;
   }
 
   input.filter-items-input {
