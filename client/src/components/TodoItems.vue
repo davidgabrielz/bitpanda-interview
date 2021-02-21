@@ -127,15 +127,16 @@ export default class TodoItems extends Vue {
 
 .filter-items-container {
   display: flex;
-  border-radius: 11px;
+  border-radius: 15px;
   align-items: center;
   background: #dbdbdb;
+  padding: 5px;
 
   .filter-items-icon {
     font-size: 20px;
     font-weight: normal;
     color: #676767;
-    margin-left: 8px;
+    // margin-left: 8px;
   }
 
   input.filter-items-input {
@@ -148,6 +149,7 @@ export default class TodoItems extends Vue {
     &::placeholder {
       overflow: visible;
       color: #787878;
+      font-weight: 100;
     }
   }
 }
