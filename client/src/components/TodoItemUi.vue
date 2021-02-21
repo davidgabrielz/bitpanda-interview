@@ -16,8 +16,10 @@ import {
   Watch,
 } from 'vue-property-decorator';
 
+import Checkbox from '@/libComponents/Checkbox.vue';
+import todoActions from '@/stores/todoActions';
+import todoMutations from '@/stores/todoMutations';
 import { TodoItem } from '@/types/Todo';
-import Checkbox from '@/utils/Checkbox.vue';
 import { timeSince } from '@/utils/formatters';
 
 @Component({
@@ -35,7 +37,7 @@ export default class TodoItemUi extends Vue {
   }
 
   set isDone(newV: boolean) {
-    this.$store.commit('setItemDone', {
+    this.$store.commit(todoMutations.SET_ITEM_DONE, {
       item: this.item,
       isDone: newV,
     });
@@ -43,7 +45,7 @@ export default class TodoItemUi extends Vue {
 
   @Watch('isDone')
   itemStateChanged(newV: boolean): void {
-    void this.$store.dispatch('updateItem', {
+    void this.$store.dispatch(todoActions.UPDATE_ITEM, {
       item: this.item,
       isDone: newV,
     });
@@ -54,7 +56,7 @@ export default class TodoItemUi extends Vue {
   }
 
   remove(): void {
-    void this.$store.dispatch('removeItem', this.item);
+    void this.$store.dispatch(todoActions.REMOVE_ITEM, this.item);
   }
 }
 </script>

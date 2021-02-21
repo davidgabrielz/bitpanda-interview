@@ -35,6 +35,8 @@ import AddIcon from 'vue-material-design-icons/Plus.vue';
 import { Vue, Component, Watch } from 'vue-property-decorator';
 
 import TodoItemUi from '@/components/TodoItemUi.vue';
+import todoActions from '@/stores/todoActions';
+import todoMutations from '@/stores/todoMutations';
 import { TodoState } from '@/stores/todoStore';
 import { TodoItem, TodoMeta } from '@/types/Todo';
 
@@ -56,7 +58,7 @@ export default class TodoItems extends Vue {
   }
 
   set filterTerm(v: string) {
-    this.$store.commit('setFilterTerm', v);
+    this.$store.commit(todoMutations.SET_FILTER_TERM, v);
   }
 
   @Watch('filterTerm')
@@ -77,31 +79,31 @@ export default class TodoItems extends Vue {
   }
 
   reloadItems(): void {
-    this.$store.commit('setOffset', 0);
+    this.$store.commit(todoMutations.SET_META_OFFSET, 0);
 
-    void this.$store.dispatch('getTodoItems');
+    void this.$store.dispatch(todoActions.LOAD_TODO_ITEMS);
   }
 
   prevPage(): void {
     if (!this.meta.hasPrevPage) return;
 
-    void this.$store.dispatch('loadPrevPage');
+    void this.$store.dispatch(todoActions.LOAD_PREV_PAGE);
   }
 
   nextPage(): void {
     if (!this.meta.hasNextPage) return;
 
-    void this.$store.dispatch('loadNextPage');
+    void this.$store.dispatch(todoActions.LOAD_NEXT_PAGE);
   }
 
   addNewItem(): void {
     // TODO: change this to use notification mechanism
     if (!this.newItem) {
-      alert('Please add a description!');
+      alert('Please add a description..');
       return;
     }
 
-    void this.$store.dispatch('addItem', this.newItem);
+    void this.$store.dispatch(todoActions.ADD_ITEM, this.newItem);
     this.newItem = '';
   }
 }
