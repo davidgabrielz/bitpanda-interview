@@ -2,15 +2,14 @@ import axios from 'axios';
 import Vue from 'vue';
 import Vuex, { ActionContext } from 'vuex';
 
-import { TodoItemType, TodoResponse, TodoResponseMeta } from '@/appTypes/Todo';
+import { TodoItem, TodoResponse, TodoMeta } from '@/types/Todo';
+import { BASE_URI } from '@/utils/appConst';
 
 Vue.use(Vuex);
 
-const baseUri = 'http://localhost:3000/api/v1';
-
 export interface TodoState {
-  todoItems: TodoItemType[];
-  meta: TodoResponseMeta,
+  todoItems: TodoItem[];
+  meta: TodoMeta,
   filterTerm: string;
 }
 
@@ -35,31 +34,31 @@ const todoState: TodoState = {
 export default new Vuex.Store({
   state: todoState,
   mutations: {
-    setTodoItems(state, items: TodoItemType[]): void {
+    setTodoItems(state, items: TodoItem[]): void {
       state.todoItems = items;
     },
-    setMeta(state, meta: TodoResponseMeta): void {
+    setMeta(state, meta: TodoMeta): void {
       state.meta = meta;
     },
     setOffset(state, offset: number): void {
       state.meta = { ...state.meta, offset };
     },
-    setItemDone(state, payload: { item: TodoItemType, isDone: boolean }) {
-      state.todoItems = state.todoItems.map((x: TodoItemType) => (x._id === payload.item._id
+    setItemDone(state, payload: { item: TodoItem, isDone: boolean }) {
+      state.todoItems = state.todoItems.map((x: TodoItem) => (x._id === payload.item._id
         ? { ...x, done: payload.isDone }
         : x
       ));
     },
-    addItem(state, item: TodoItemType) {
+    addItem(state, item: TodoItem) {
       state.todoItems = [item, ...state.todoItems];
     },
-    updateItemDetails(state, item: TodoItemType) {
-      state.todoItems = state.todoItems.map((x: TodoItemType) => (x._id === item._id
+    updateItemDetails(state, item: TodoItem) {
+      state.todoItems = state.todoItems.map((x: TodoItem) => (x._id === item._id
         ? item
         : x
       ));
     },
-    removeItem(state, item: TodoItemType) {
+    removeItem(state, item: TodoItem) {
       state.todoItems = state.todoItems.filter((x) => (x._id !== item._id));
     },
     setFilterTerm(state, term: string) {
@@ -68,7 +67,7 @@ export default new Vuex.Store({
   },
   actions: {
     getTodoItems(context: ActionContext<typeof todoState, typeof todoState>): void {
-      axios.get<TodoResponse>(`${baseUri}/todo`, {
+      axios.get<TodoResponse>(`${BASE_URI}/todo`, {
         params: {
           limit: pageDim,
           description: context.state.filterTerm,
@@ -90,20 +89,20 @@ export default new Vuex.Store({
       void context.dispatch('getTodoItems');
     },
     updateItem(context: ActionContext<typeof todoState, typeof todoState>,
-      args: { item: TodoItemType, isDone: boolean }): void {
-      axios.put<TodoItemType>(`${baseUri}/todo/${args.item._id}`, { done: args.isDone })
+      args: { item: TodoItem, isDone: boolean }): void {
+      axios.put<TodoItem>(`${BASE_URI}/todo/${args.item._id}`, { done: args.isDone })
         .then((r) => context.commit('updateItemDetails', r.data))
         .catch(() => console.log('something failed'));
     },
     addItem(context: ActionContext<typeof todoState, typeof todoState>,
       description: string): void {
-      axios.post<TodoItemType>(`${baseUri}/todo/`, { description })
+      axios.post<TodoItem>(`${BASE_URI}/todo/`, { description })
         .then((r) => context.commit('addItem', r.data))
         .catch(() => console.log('something failed'));
     },
     removeItem(context: ActionContext<typeof todoState, typeof todoState>,
-      item: TodoItemType): void {
-      axios.delete<TodoItemType>(`${baseUri}/todo/${item._id}`)
+      item: TodoItem): void {
+      axios.delete<TodoItem>(`${BASE_URI}/todo/${item._id}`)
         .then(() => context.commit('removeItem', item))
         .catch(() => console.log('something failed'));
     },

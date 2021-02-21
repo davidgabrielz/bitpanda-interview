@@ -16,19 +16,19 @@ import {
   Watch,
 } from 'vue-property-decorator';
 
-import { TodoItemType } from '@/appTypes/Todo';
+import { TodoItem } from '@/types/Todo';
 import Checkbox from '@/utils/Checkbox.vue';
 import { timeSince } from '@/utils/formatters';
 
 @Component({
-  name: 'TodoItem',
+  name: 'TodoItemUi',
   components: {
     RemoveIcon,
     Checkbox,
   },
 })
-export default class TodoItem extends Vue {
-  @Prop({ required: true }) item!: TodoItemType;
+export default class TodoItemUi extends Vue {
+  @Prop({ required: true }) item!: TodoItem;
 
   get isDone(): boolean {
     return this.item.done;

@@ -12,7 +12,7 @@
           @keyup.enter="addNewItem"
         )
         add-icon.confirm-add(@click="addNewItem")
-      todo-item(v-for="(item, i) in items"
+      todo-item-ui(v-for="(item, i) in items"
         :key="item._id"
         :item="item"
         :class="i === items.length - 1 ? 'last-item' : ''"
@@ -34,14 +34,14 @@ import SearchIcon from 'vue-material-design-icons/Magnify.vue';
 import AddIcon from 'vue-material-design-icons/Plus.vue';
 import { Vue, Component, Watch } from 'vue-property-decorator';
 
-import { TodoItemType, TodoResponseMeta } from '@/appTypes/Todo';
-import TodoItem from '@/components/TodoItem.vue';
+import TodoItemUi from '@/components/TodoItemUi.vue';
 import { TodoState } from '@/stores/todoStore';
+import { TodoItem, TodoMeta } from '@/types/Todo';
 
 @Component({
   name: 'TodoItems',
   components: {
-    TodoItem,
+    TodoItemUi,
     SearchIcon,
     AddIcon,
     PrevIcon,
@@ -64,11 +64,11 @@ export default class TodoItems extends Vue {
     this.reloadItems();
   }
 
-  get items(): TodoItemType[] {
+  get items(): TodoItem[] {
     return (this.$store.state as TodoState).todoItems;
   }
 
-  get meta(): TodoResponseMeta {
+  get meta(): TodoMeta {
     return (this.$store.state as TodoState).meta;
   }
 

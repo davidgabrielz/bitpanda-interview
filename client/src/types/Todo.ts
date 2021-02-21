@@ -1,4 +1,4 @@
-export interface TodoItemType {
+export interface TodoItem {
     _id: string;
     description: string;
     done: boolean;
@@ -6,7 +6,7 @@ export interface TodoItemType {
     updatedAt: string;
 }
 
-export interface TodoResponseMeta {
+export interface TodoMeta {
     hasNextPage: boolean,
     hasPrevPage: boolean,
     itemCount: number,
@@ -19,6 +19,6 @@ export interface TodoResponseMeta {
 }
 
 export interface TodoResponse {
-    items: TodoItemType[];
-    meta: TodoResponseMeta;
+    items: TodoItem[];
+    meta: TodoMeta;
 }
